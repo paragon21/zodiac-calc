@@ -16,6 +16,10 @@ body {
     color: #ffffff;
 }
 
+.calc__scoreboard {
+    text-align: end;
+}
+
 .calc__button-group {
     display: grid;
     grid-template-columns: 100px 100px 100px 100px;
