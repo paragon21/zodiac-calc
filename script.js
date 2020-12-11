@@ -43,8 +43,13 @@ const chooseOperator = e => {
         default:
             return;
     }
-    previuos = [...current]
-    current = []
+    if (current.length && previuos.length) {
+        previuos = [resultOperation()]
+        current = []
+    } else {
+        previuos = [...current]
+        current = []
+    }  
 }
 
 const resultOperation = e => {
@@ -68,12 +73,15 @@ const resultOperation = e => {
         default:
             return
     }
-    if (Number.isInteger(result)) {
-        scoreBoard.innerHTML = result
-    } else {
-        scoreBoard.innerText = 'ERROR!' 
-    }
-    previuos, current = []
+    if (e?.target.innerText === '=') {
+        if (Number.isInteger(result)) {
+            scoreBoard.innerHTML = result
+        } else {
+            scoreBoard.innerText = 'ERROR' 
+        }
+        previuos, current = []
+    }  
+    return result
 }
 
 for (let i of numButtons) {
@@ -92,7 +100,7 @@ clearButton.addEventListener('click', e => {
 })
 
 ceButton.addEventListener('click', e => {
-    if (current.join('') === 0) {
+    if (+current.join('') === 0) {
         return
     }
     if (current.length === 1) {
