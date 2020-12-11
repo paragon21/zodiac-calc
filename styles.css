@@ -12,6 +12,7 @@ body {
 
 .calc {
     padding: 2rem 2rem;
+    border-radius: 12px;
     background-color: black;
     color: #ffffff;
 }

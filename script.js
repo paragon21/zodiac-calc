@@ -8,10 +8,22 @@ const resultButton = document.getElementsByClassName('result-button')[0]
 const scoreBoard = document.getElementsByClassName('calc__scoreboard')[0]
 const clearButton = document.getElementsByClassName('clear-button')[0]
 const inverseButton = document.getElementsByClassName('inverse-button')[0]
+const ceButton = document.getElementsByClassName('ce-button')[0]
 
-const addNum = e => {
-    current.push(e.target.innerText)
+const addNum = num => {
+    current.push(num)
     if (scoreBoard.innerText.length < 8) scoreBoard.innerHTML = current.join('') || 0
+}
+
+const addKeyupNum = e => {
+    if (e.code.match(/^(numpad|digit)\d$/gi)) {
+        const num = e.code.split('').reverse()[0]
+        addNum(num)
+    }
+}
+
+const addClickNum = e => {
+    addNum(e.target.innerText)
 }
 
 const chooseOperator = e => {
@@ -48,21 +60,24 @@ const resultOperation = e => {
             result =  +previuos.join('') - +current.join('')
             break;
         case 'mul':
-            result = +previuos.join('') * +current.join('')
+            result = ( +previuos.join('') * +current.join(''))
+            break;
         case 'div':
             result = Math.floor(+previuos.join('') / +current.join(''))
+            break;
+        default:
+            return
     }
-    console.log(result)
     if (Number.isInteger(result)) {
         scoreBoard.innerHTML = result
     } else {
-        scoreBoard.innerHTML = 'ERROR!' 
+        scoreBoard.innerText = 'ERROR!' 
     }
     previuos, current = []
 }
 
 for (let i of numButtons) {
-    i.addEventListener('click', addNum)
+    i.addEventListener('click', addClickNum)
 }
 
 for (let i of operatorButtons) {
@@ -73,7 +88,20 @@ resultButton.addEventListener('click', resultOperation)
 
 clearButton.addEventListener('click', e => {
     previuos, current = []
-    scoreBoard.innerHTML = '  '
+    scoreBoard.innerText = '0'
+})
+
+ceButton.addEventListener('click', e => {
+    if (current.join('') === 0) {
+        return
+    }
+    if (current.length === 1) {
+        current = []
+        scoreBoard.innerHTML = "0"
+    } else {
+        current.pop()
+        scoreBoard.innerHTML = current.join('')
+    }
 })
 
 inverseButton.addEventListener('click', e => {
@@ -88,3 +116,5 @@ inverseButton.addEventListener('click', e => {
         scoreBoard.innerHTML = scoreBoard.innerHTML.replace(/\-/, '')
     }
 })
+
+document.addEventListener('keydown', addKeyupNum)
