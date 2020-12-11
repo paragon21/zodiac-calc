@@ -16,6 +16,7 @@ const addNum = num => {
 }
 
 const addKeyupNum = e => {
+    console.log(e.code)
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
         const num = e.code.split('').reverse()[0]
         addNum(num)
@@ -23,11 +24,12 @@ const addKeyupNum = e => {
 }
 
 const addClickNum = e => {
-    addNum(e.target.innerText)
+    const num = e.target.innerText
+    addNum(num)
 }
 
-const chooseOperator = e => {
-    switch(e.target.innerText) {
+const chooseOperator = choosenOperator => {
+    switch(choosenOperator) {
         case '+':
             operator = 'plus'
             break;
@@ -43,13 +45,15 @@ const chooseOperator = e => {
         default:
             return;
     }
+    // Если после ввода операндов А и Б вместо результата, операции продолжаются
     if (current.length && previuos.length) {
-        previuos = [resultOperation()]
+        previuos = [String(resultOperation())]
         current = []
     } else {
         previuos = [...current]
         current = []
-    }  
+    }
+    return  
 }
 
 const resultOperation = e => {
@@ -73,13 +77,14 @@ const resultOperation = e => {
         default:
             return
     }
+    // Если результат считается после нажатия = 
     if (e?.target.innerText === '=') {
         if (Number.isInteger(result)) {
             scoreBoard.innerHTML = result
         } else {
             scoreBoard.innerText = 'ERROR' 
         }
-        previuos, current = []
+        previuos = 0, current = []
     }  
     return result
 }
@@ -89,13 +94,15 @@ for (let i of numButtons) {
 }
 
 for (let i of operatorButtons) {
-    i.addEventListener('click', chooseOperator)
+    i.addEventListener('click', e => {
+        chooseOperator(e.target.innerText)
+    })
 }
 
 resultButton.addEventListener('click', resultOperation)
 
 clearButton.addEventListener('click', e => {
-    previuos, current = []
+    previuos = [], current = []
     scoreBoard.innerText = '0'
 })
 
