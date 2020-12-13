@@ -16,10 +16,29 @@ const addNum = num => {
 }
 
 const addKeyupNum = e => {
-    console.log(e.code)
+    console.log(e.code);
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
         const num = e.code.split('').reverse()[0]
         addNum(num)
+    }
+    if (e.code.match(/numpad(divide|multiply|subtract|add)/gi)) {
+        switch (e.code) {
+            case 'NumpadDivide':
+                chooseOperator('/')
+                break;
+            case 'NumpadMultiply':
+                chooseOperator('*')
+                break;
+            case 'NumpadSubtract':
+                
+                chooseOperator('-')
+                break;
+            case 'NumpadAdd':
+                chooseOperator('+')
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -47,10 +66,13 @@ const chooseOperator = choosenOperator => {
     }
     // Если после ввода операндов А и Б вместо результата, операции продолжаются
     if (current.length && previuos.length) {
-        previuos = [String(resultOperation())]
+        const tmp_result = resultOperation()
+        scoreBoard.innerText = tmp_result
+        previuos = [String(tmp_result)]
         current = []
     } else {
-        previuos = [...current]
+        // До ввода любой цифры второго числа можно поменять операцию нажав на любую другую операцию
+        previuos = current.length ? [...current] : [...previuos]
         current = []
     }
     return  
@@ -84,7 +106,7 @@ const resultOperation = e => {
         } else {
             scoreBoard.innerText = 'ERROR' 
         }
-        previuos = 0, current = []
+        previuos = [], current = [...String(result).split('')]
     }  
     return result
 }
