@@ -3,20 +3,19 @@ let current = [],
     operator = null
 
 const numButtons = document.querySelectorAll('.num-button')
-const operatorButtons = document.getElementsByClassName('operator-button')
-const resultButton = document.getElementsByClassName('result-button')[0]
-const scoreBoard = document.getElementsByClassName('calc__scoreboard')[0]
-const clearButton = document.getElementsByClassName('clear-button')[0]
-const inverseButton = document.getElementsByClassName('inverse-button')[0]
-const ceButton = document.getElementsByClassName('ce-button')[0]
+const operatorButtons = document.querySelectorAll('.operator-button')
+const resultButton = document.querySelector('.result-button')
+const scoreBoard = document.querySelector('.calc__scoreboard')
+const clearButton = document.querySelector('.clear-button')
+const inverseButton = document.querySelector('.inverse-button')
+const ceButton = document.querySelector('.ce-button')
 
 const addNum = num => {
     current.push(num)
-    if (scoreBoard.innerText.length < 8) scoreBoard.innerHTML = current.join('') || 0
+    if (scoreBoard.textContent.length < 8) scoreBoard.textContent = current.join('') || 0
 }
 
 const addKeyupNum = e => {
-    console.log(e.code);
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
         const num = e.code.split('').reverse()[0]
         addNum(num)
@@ -30,7 +29,6 @@ const addKeyupNum = e => {
                 chooseOperator('*')
                 break;
             case 'NumpadSubtract':
-                
                 chooseOperator('-')
                 break;
             case 'NumpadAdd':
@@ -43,7 +41,7 @@ const addKeyupNum = e => {
 }
 
 const addClickNum = e => {
-    const num = e.target.innerText
+    const num = e.target.textContent
     addNum(num)
 }
 
@@ -67,7 +65,7 @@ const chooseOperator = choosenOperator => {
     // Если после ввода операндов А и Б вместо результата, операции продолжаются
     if (current.length && previuos.length) {
         const tmp_result = resultOperation()
-        scoreBoard.innerText = tmp_result
+        scoreBoard.textContent = tmp_result
         previuos = [String(tmp_result)]
         current = []
     } else {
@@ -100,11 +98,11 @@ const resultOperation = e => {
             return
     }
     // Если результат считается после нажатия = 
-    if (e?.target.innerText === '=') {
+    if (e?.target.textContent === '=') {
         if (Number.isInteger(result)) {
-            scoreBoard.innerHTML = result
+            scoreBoard.textContent = result
         } else {
-            scoreBoard.innerText = 'ERROR' 
+            scoreBoard.textContent = 'ERROR' 
         }
         previuos = [], current = [...String(result).split('')]
     }  
@@ -117,7 +115,7 @@ for (let i of numButtons) {
 
 for (let i of operatorButtons) {
     i.addEventListener('click', e => {
-        chooseOperator(e.target.innerText)
+        chooseOperator(e.target.textContent)
     })
 }
 
@@ -125,7 +123,7 @@ resultButton.addEventListener('click', resultOperation)
 
 clearButton.addEventListener('click', e => {
     previuos = [], current = []
-    scoreBoard.innerText = '0'
+    scoreBoard.textContent = '0'
 })
 
 ceButton.addEventListener('click', e => {
@@ -134,23 +132,23 @@ ceButton.addEventListener('click', e => {
     }
     if (current.length === 1) {
         current = []
-        scoreBoard.innerHTML = "0"
+        scoreBoard.textContent = "0"
     } else {
         current.pop()
-        scoreBoard.innerHTML = current.join('')
+        scoreBoard.textContent = current.join('')
     }
 })
 
 inverseButton.addEventListener('click', e => {
-    if (!current.length || scoreBoard.innerText === 0) {
+    if (!current.length || scoreBoard.textContent === 0) {
         return
     }
     if (current[0] !== '-') {
         current.unshift('-')
-        scoreBoard.innerHTML = `-${scoreBoard.innerHTML}`
+        scoreBoard.textContent = `-${scoreBoard.textContent}`
     } else {
         current.shift()
-        scoreBoard.innerHTML = scoreBoard.innerHTML.replace(/\-/, '')
+        scoreBoard.textContent = scoreBoard.textContent.replace(/\-/, '')
     }
 })
 
