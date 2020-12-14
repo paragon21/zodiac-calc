@@ -12,7 +12,9 @@ const ceButton = document.querySelector('.ce-button')
 
 const addNum = num => {
     current.push(num)
-    if (scoreBoard.textContent.length < 8) scoreBoard.textContent = current.join('') || 0
+    if (scoreBoard.textContent.length < 8) {
+        scoreBoard.textContent = current.join('')
+    }
 }
 
 const addKeyupNum = e => {
