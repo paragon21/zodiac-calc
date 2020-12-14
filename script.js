@@ -11,18 +11,20 @@ const inverseButton = document.querySelector('.inverse-button')
 const ceButton = document.querySelector('.ce-button')
 
 const addNum = num => {
-    current.push(num)
-    if (scoreBoard.textContent.length < 8) {
-        scoreBoard.textContent = current.join('')
+    if (current.length < 8) {
+        current.push(num)       
     }
+    scoreBoard.textContent = current.join('')
 }
 
 const addKeyupNum = e => {
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
+        e.preventDefault()
         const num = e.code.split('').reverse()[0]
         addNum(num)
     }
     if (e.code.match(/numpad(divide|multiply|subtract|add)/gi)) {
+        e.preventDefault()
         switch (e.code) {
             case 'NumpadDivide':
                 chooseOperator('/')
@@ -40,6 +42,10 @@ const addKeyupNum = e => {
                 break;
         }
     }
+    if(e.code.match(/((numpad)?enter|equal)/gi)) {
+        e.preventDefault()
+        resultOperation(e)
+    }
 }
 
 const addClickNum = e => {
@@ -48,6 +54,19 @@ const addClickNum = e => {
 }
 
 const chooseOperator = choosenOperator => {
+
+    // Если после ввода операндов А и Б вместо результата, операции продолжаются
+    if (current.length && previuos.length) {
+        const tmp_result = resultOperation()
+        scoreBoard.textContent = tmp_result
+        previuos = [String(tmp_result)]
+        current = []
+    } else {
+        // До ввода любой цифры второго числа можно поменять операцию нажав на любую другую операцию
+        previuos = current.length ? [...current] : [...previuos]
+        current = []
+    }
+
     switch(choosenOperator) {
         case '+':
             operator = 'plus'
@@ -63,24 +82,12 @@ const chooseOperator = choosenOperator => {
             break;
         default:
             return;
-    }
-    // Если после ввода операндов А и Б вместо результата, операции продолжаются
-    if (current.length && previuos.length) {
-        const tmp_result = resultOperation()
-        scoreBoard.textContent = tmp_result
-        previuos = [String(tmp_result)]
-        current = []
-    } else {
-        // До ввода любой цифры второго числа можно поменять операцию нажав на любую другую операцию
-        previuos = current.length ? [...current] : [...previuos]
-        current = []
-    }
-    return  
+    }  
 }
 
 const resultOperation = e => {
     let result
-    if (!previuos.length || !current.length) {
+    if ( !previuos.length || !current.length ) {
         return
     }
     switch (operator) {
@@ -94,13 +101,19 @@ const resultOperation = e => {
             result = ( +previuos.join('') * +current.join(''))
             break;
         case 'div':
-            result = Math.floor(+previuos.join('') / +current.join(''))
+            result = Number.parseInt( +previuos.join('') / +current.join('') )
             break;
         default:
             return
     }
-    // Если результат считается после нажатия = 
-    if (e?.target.textContent === '=') {
+    // Обрезать результат, табло не длинее 8 символов
+    result = Number.parseInt(
+        String(result).split('').slice(0,8).join('')
+        )
+    // Если результат считается после нажатия = / Enter
+    if ( e?.target.textContent === '=' || 
+        e.code.match(/((numpad)?enter|equal)/gi) ) {
+
         if (Number.isInteger(result)) {
             scoreBoard.textContent = result
         } else {
