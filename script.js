@@ -112,7 +112,7 @@ const resultOperation = e => {
         )
     // Если результат считается после нажатия = / Enter
     if ( e?.target.textContent === '=' || 
-        e.code.match(/((numpad)?enter|equal)/gi) ) {
+        e?.code.match(/((numpad)?enter|equal)/gi) ) {
 
         if (Number.isInteger(result)) {
             scoreBoard.textContent = result
