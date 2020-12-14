@@ -107,9 +107,17 @@ const resultOperation = e => {
             return
     }
     // Обрезать результат, табло не длинее 8 символов
-    result = Number.parseInt(
-        String(result).split('').slice(0,8).join('')
+    if (String(result)[0] === '-') {
+        result = Number.parseInt(
+            String(result).split('').slice(0,9).join('')
         )
+    } else {
+        result = Number.parseInt(
+            String(result).split('').slice(0,8).join('')
+        )
+    }
+    
+
     // Если результат считается после нажатия = / Enter
     if ( e?.target.textContent === '=' || 
         e?.code.match(/((numpad)?enter|equal)/gi) ) {
