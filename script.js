@@ -11,11 +11,42 @@ const inverseButton = document.querySelector('.inverse-button')
 const ceButton = document.querySelector('.ce-button')
 
 const addNum = num => {
-    if (current.length < 8) {
-        current.push(num)       
-    }
-    scoreBoard.textContent = current.join('')
+    try {
+        current.push(num)
+    } catch (e) {
+        console.error(e)
+    }       
 }
+
+current = new Proxy(current, {
+    set(target, prop, value) {
+        console.log(target)
+        if (typeof value == 'number') {
+            if (target.length <= 7) {
+                target[prop] = value
+                scoreBoard.textContent = target.join('')
+                return true
+            }
+            return true
+        } else if (value === '-') {
+            if (target[0] === '-') {
+                target.shift()
+                scoreBoard.textContent = target.join('')
+                return true
+            } else {
+                target.unshift('-')
+                scoreBoard.textContent = target.join('')
+                return true
+            }
+        } else {
+            return false
+        }
+    },
+    deleteProperty(target, prop) {
+        delete target[prop]
+        return true
+    }
+})
 
 const addKeyupNum = e => {
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
@@ -49,7 +80,7 @@ const addKeyupNum = e => {
 }
 
 const addClickNum = e => {
-    const num = e.target.textContent
+    const num = +e.target.textContent
     addNum(num)
 }
 
@@ -119,8 +150,8 @@ const resultOperation = e => {
     
 
     // Если результат считается после нажатия = / Enter
-    if ( e?.target.textContent === '=' || 
-        e?.code.match(/((numpad)?enter|equal)/gi) ) {
+    if ( e.target.textContent === '=' || 
+        e.code.match(/((numpad)?enter|equal)/gi) ) {
 
         if (Number.isInteger(result)) {
             scoreBoard.textContent = result
@@ -163,16 +194,7 @@ ceButton.addEventListener('click', e => {
 })
 
 inverseButton.addEventListener('click', e => {
-    if (!current.length || scoreBoard.textContent === 0) {
-        return
-    }
-    if (current[0] !== '-') {
-        current.unshift('-')
-        scoreBoard.textContent = `-${scoreBoard.textContent}`
-    } else {
-        current.shift()
-        scoreBoard.textContent = scoreBoard.textContent.replace(/\-/, '')
-    }
+    current.push('-')
 })
 
 document.addEventListener('keydown', addKeyupNum)
