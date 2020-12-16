@@ -20,12 +20,16 @@ const addNum = num => {
 
 current = new Proxy(current, {
     set(target, prop, value) {
-        console.log(target)
+        console.log(target, prop, value)
         if (typeof value == 'number') {
             if (target.length <= 7) {
                 target[prop] = value
                 scoreBoard.textContent = target.join('')
                 return true
+            } else if (target.length === 8 && !target[7]) {
+                target[prop] = value
+                scoreBoard.textContent = target.join('')
+                return true 
             }
             return true
         } else if (value === '-') {
@@ -38,12 +42,7 @@ current = new Proxy(current, {
                 scoreBoard.textContent = target.join('')
                 return true
             }
-        } else {
-            return false
         }
-    },
-    deleteProperty(target, prop) {
-        delete target[prop]
         return true
     }
 })
@@ -52,7 +51,7 @@ const addKeyupNum = e => {
     if (e.code.match(/^(numpad|digit)\d$/gi)) {
         e.preventDefault()
         const num = e.code.split('').reverse()[0]
-        addNum(num)
+        addNum(+num)
     }
     if (e.code.match(/numpad(divide|multiply|subtract|add)/gi)) {
         e.preventDefault()
